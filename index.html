@@ -92,7 +92,7 @@
   .btn-primary:hover{background:var(--akane-dark);}
   .btn-ghost{border:1px solid rgba(250,245,233,0.3); color:var(--washi-2); padding:15px 28px; border-radius:3px; font-weight:600; font-size:14.5px;}
   .btn-ghost:hover{background:rgba(250,245,233,0.08);}
-  .ribbon-banner{background:var(--akane); color:#fdf3ee; padding:18px 0; position:relative; z-index:2;}
+  .ribbon-banner{background:var(--akane); color:#fdf3ee; padding:18px 0; position:relative; z-index:2; margin-top:40px;}
   .ribbon-inner{display:flex; justify-content:center; gap:46px; flex-wrap:wrap; text-align:center;}
   .ribbon-stat .num{font-family:'Shippori Mincho B1', serif; font-weight:700; font-size:22px;}
   .ribbon-stat .lbl{font-family:'Space Mono', monospace; font-size:10.5px; letter-spacing:.1em; opacity:.85; text-transform:uppercase; margin-top:2px;}
@@ -116,7 +116,8 @@
   @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
 
   .dish-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;}
-  .dish-card{background:var(--washi-2); border-radius:8px; overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; position:relative;}
+  .dish-card{background:var(--washi-2); border-radius:8px; overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; position:relative; transition:transform .25s cubic-bezier(.2,.8,.3,1.3), box-shadow .25s ease; will-change:transform;}
+  .dish-card:hover{transform:translateY(-8px) scale(1.025); box-shadow:0 26px 46px -16px rgba(28,22,17,0.42), 0 8px 16px -6px rgba(28,22,17,0.18); z-index:3;}
   .pop-badge{
     position:absolute; top:10px; left:10px; z-index:2; background:var(--gold); color:var(--sumi);
     font-family:'Caveat', cursive; font-weight:700; font-size:16px; padding:3px 12px 5px; border-radius:999px;
@@ -375,6 +376,174 @@
 </head>
 <body>
 
+<!-- ===== SKELETON LOADER ===== -->
+<style>
+  #kama-skel{
+    position:fixed;inset:0;z-index:99999;background:#f1e8d6;
+    display:flex;flex-direction:column;overflow:hidden;
+    transition:opacity .55s ease;
+  }
+  #kama-skel.done{opacity:0;pointer-events:none;}
+  @keyframes kSkim{
+    0%{background-position:-700px 0}
+    100%{background-position:700px 0}
+  }
+  .ks{
+    background:linear-gradient(90deg,#e3d8c3 25%,#f0e9d8 50%,#e3d8c3 75%);
+    background-size:900px 100%;
+    animation:kSkim 1.5s infinite linear;
+    border-radius:4px;
+  }
+  .ks-r{border-radius:999px;}
+  /* NAV */
+  .ks-nav{
+    height:68px;background:#1c1815;flex-shrink:0;
+    display:flex;align-items:center;padding:0 28px;gap:24px;
+    border-bottom:1px solid rgba(255,255,255,0.07);
+  }
+  .ks-nav .ks{
+    background:linear-gradient(90deg,#2e281f 25%,#3c3428 50%,#2e281f 75%);
+    background-size:900px 100%;animation:kSkim 1.5s infinite linear;
+  }
+  /* HERO */
+  .ks-hero{
+    height:290px;background:#1c1815;flex-shrink:0;
+    display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:14px;
+  }
+  .ks-hero .ks{
+    background:linear-gradient(90deg,#2e281f 25%,#40352a 50%,#2e281f 75%);
+    background-size:900px 100%;animation:kSkim 1.5s infinite linear;
+  }
+  /* RIBBON */
+  .ks-rib{
+    height:58px;background:#b32f25;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;gap:46px;
+  }
+  .ks-rib .ks{
+    background:linear-gradient(90deg,#9c2820 25%,#c9382d 50%,#9c2820 75%);
+    background-size:900px 100%;animation:kSkim 1.5s infinite linear;
+  }
+  /* BODY */
+  .ks-body{flex:1;background:#f1e8d6;padding:52px 28px;}
+  .ks-inner{max-width:1180px;margin:0 auto;}
+  .ks-head{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+  .ks-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+  .ks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .ks-card{
+    background:#faf5e9;border-radius:8px;padding:16px;
+    display:flex;flex-direction:column;gap:11px;
+    box-shadow:0 10px 24px -14px rgba(28,22,17,0.28);
+  }
+  .ks-art{
+    height:100px;border-radius:6px;
+    background:linear-gradient(90deg,#ede4cc 25%,#f8f0e0 50%,#ede4cc 75%);
+    background-size:900px 100%;animation:kSkim 1.5s infinite linear;
+  }
+  @media(max-width:600px){
+    .ks-grid{grid-template-columns:1fr;}
+    .ks-rib{gap:22px;}
+    .ks-nav{padding:0 14px;}
+  }
+</style>
+
+<div id="kama-skel" role="status" aria-label="Loading Kamagami…">
+
+  <!-- Nav -->
+  <div class="ks-nav">
+    <div class="ks" style="width:170px;height:38px;"></div>
+    <div style="flex:1;display:flex;justify-content:center;gap:26px;">
+      <div class="ks ks-r" style="width:46px;height:13px;"></div>
+      <div class="ks ks-r" style="width:80px;height:13px;"></div>
+      <div class="ks ks-r" style="width:58px;height:13px;"></div>
+      <div class="ks ks-r" style="width:54px;height:13px;"></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="ks" style="width:64px;height:30px;border-radius:999px;"></div>
+      <div class="ks" style="width:40px;height:40px;border-radius:50%;"></div>
+      <div class="ks" style="width:108px;height:40px;border-radius:3px;"></div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="ks-hero">
+    <div class="ks ks-r" style="width:240px;height:22px;"></div>
+    <div class="ks" style="width:380px;max-width:88%;height:84px;border-radius:3px;"></div>
+    <div class="ks ks-r" style="width:180px;height:13px;"></div>
+    <div style="display:flex;gap:12px;margin-top:6px;">
+      <div class="ks" style="width:132px;height:46px;border-radius:3px;"></div>
+      <div class="ks" style="width:132px;height:46px;border-radius:3px;"></div>
+    </div>
+  </div>
+
+  <!-- Ribbon -->
+  <div class="ks-rib">
+    <div class="ks ks-r" style="width:80px;height:28px;"></div>
+    <div class="ks ks-r" style="width:68px;height:28px;"></div>
+    <div class="ks ks-r" style="width:76px;height:28px;"></div>
+    <div class="ks ks-r" style="width:130px;height:13px;"></div>
+  </div>
+
+  <!-- Body -->
+  <div class="ks-body">
+    <div class="ks-inner">
+      <div class="ks-head">
+        <div class="ks ks-r" style="width:130px;height:11px;"></div>
+        <div class="ks" style="width:180px;height:34px;border-radius:3px;"></div>
+      </div>
+      <div class="ks-tabs">
+        <div class="ks ks-r" style="width:108px;height:36px;"></div>
+        <div class="ks ks-r" style="width:76px;height:36px;"></div>
+        <div class="ks ks-r" style="width:118px;height:36px;"></div>
+        <div class="ks ks-r" style="width:110px;height:36px;"></div>
+        <div class="ks ks-r" style="width:140px;height:36px;"></div>
+      </div>
+      <div class="ks-grid">
+        <!-- Card 1 -->
+        <div class="ks-card">
+          <div class="ks-art"></div>
+          <div class="ks ks-r" style="width:70%;height:11px;"></div>
+          <div class="ks" style="width:88%;height:17px;border-radius:3px;"></div>
+          <div class="ks ks-r" style="width:55%;height:10px;"></div>
+          <div class="ks ks-r" style="width:82%;height:10px;"></div>
+          <div class="ks ks-r" style="width:82%;height:10px;"></div>
+        </div>
+        <!-- Card 2 -->
+        <div class="ks-card">
+          <div class="ks-art"></div>
+          <div class="ks ks-r" style="width:60%;height:11px;"></div>
+          <div class="ks" style="width:88%;height:17px;border-radius:3px;"></div>
+          <div class="ks ks-r" style="width:62%;height:10px;"></div>
+          <div class="ks ks-r" style="width:82%;height:10px;"></div>
+          <div class="ks ks-r" style="width:82%;height:10px;"></div>
+        </div>
+        <!-- Card 3 -->
+        <div class="ks-card">
+          <div class="ks-art"></div>
+          <div class="ks ks-r" style="width:65%;height:11px;"></div>
+          <div class="ks" style="width:88%;height:17px;border-radius:3px;"></div>
+          <div class="ks ks-r" style="width:74%;height:10px;"></div>
+          <div class="ks ks-r" style="width:82%;height:10px;"></div>
+          <div class="ks ks-r" style="width:82%;height:10px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function dismissSkeleton(){
+    var s=document.getElementById('kama-skel');
+    if(!s)return;
+    s.classList.add('done');
+    setTimeout(function(){s.remove();},600);
+  }
+  window.addEventListener('load',function(){
+    setTimeout(dismissSkeleton, 120);
+  });
+</script>
+
 <!-- ============ HEADER ============ -->
 <header class="site-header">
   <div class="nav">
@@ -418,8 +587,6 @@
     <div class="wrap ribbon-inner">
       <div class="ribbon-stat"><div class="num">4.8 ★</div><div class="lbl" data-i18n="ribbon_lbl_rating">Google Rating</div></div>
       <div class="ribbon-stat"><div class="num">351</div><div class="lbl" data-i18n="ribbon_lbl_reviews">Guest Reviews</div></div>
-      <div class="ribbon-stat"><div class="num">₪₪</div><div class="lbl" data-i18n="ribbon_lbl_price">Moderately Priced</div></div>
-      <div class="ribbon-stat"><div class="num">Obrigado, Setúbal!</div><div class="lbl" data-i18n="ribbon_lbl_thanks">From all of us at Kamagami</div></div>
     </div>
   </div>
 </section>
@@ -847,12 +1014,12 @@
   display:flex; align-items:center; justify-content:center;
   cursor:pointer;
   user-select:none;
-  will-change:transform,opacity,width,height;
+  backface-visibility:hidden;
+  transform-origin:50% 50%;
+  will-change:transform,opacity;
   transition: transform .55s cubic-bezier(.34,1.18,.64,1),
               opacity .45s ease,
-              box-shadow .4s ease,
-              width .55s cubic-bezier(.34,1.18,.64,1),
-              height .55s cubic-bezier(.34,1.18,.64,1);
+              box-shadow .4s ease;
 }
 .ring-bowl svg{ width:65%; height:auto; pointer-events:none; display:block; }
 
@@ -1092,32 +1259,42 @@
     return               { center:280, side:172, xSide:290, ySide:22 };
   }
 
+  /* ---- applyBaseSize: sets a fixed box size/position once (on init & resize only) ----
+     Keeping width/height/margin static means every swipe/rotation below only ever
+     touches `transform`, which the browser can animate on the GPU with no layout
+     recalculation — this is what makes the swipe buttery smooth instead of choppy. */
+  function applyBaseSize(){
+    const { center } = getSizes();
+    const half = center / 2;
+    TRACK.querySelectorAll('.ring-bowl').forEach(el => {
+      el.style.width      = center + 'px';
+      el.style.height     = center + 'px';
+      el.style.marginLeft = -half + 'px';
+      el.style.marginTop  = -half + 'px';
+      el.style.top        = '50%';
+      el.style.left       = '50%';
+    });
+  }
+
   /* ---- render ---- */
   function render(){
     const { center, side, xSide, ySide } = getSizes();
     const POS = [
-      { o:-2, x:-xSide*1.85, y:ySide*2, s:side*0.6, op:0,    z:0  },
-      { o:-1, x:-xSide,       y:ySide,   s:side,     op:0.78, z:5  },
-      { o: 0, x:0,            y:0,       s:center,   op:1,    z:10 },
-      { o: 1, x: xSide,       y:ySide,   s:side,     op:0.78, z:5  },
-      { o: 2, x: xSide*1.85,  y:ySide*2, s:side*0.6, op:0,    z:0  },
+      { o:-2, x:-xSide*1.85, y:ySide*2, scale:(side*0.6)/center, op:0,    z:0  },
+      { o:-1, x:-xSide,       y:ySide,   scale:side/center,        op:0.78, z:5  },
+      { o: 0, x:0,            y:0,       scale:1,                  op:1,    z:10 },
+      { o: 1, x: xSide,       y:ySide,   scale:side/center,        op:0.78, z:5  },
+      { o: 2, x: xSide*1.85,  y:ySide*2, scale:(side*0.6)/center, op:0,    z:0  },
     ];
     const bowls = TRACK.querySelectorAll('.ring-bowl');
     const dots  = DOTS_EL.querySelectorAll('.ring-dot');
     bowls.forEach((el, i) => {
       let rel = ((i - current) % N + N) % N;
       if(rel > N/2) rel -= N;
-      const p    = POS.find(p => p.o === rel) || POS[0];
-      const half = p.s / 2;
-      el.style.width      = p.s + 'px';
-      el.style.height     = p.s + 'px';
-      el.style.marginLeft = -half + 'px';
-      el.style.marginTop  = -half + 'px';
-      el.style.top        = '50%';
-      el.style.left       = '50%';
-      el.style.transform  = `translate(${p.x}px, ${p.y}px)`;
-      el.style.opacity    = p.op;
-      el.style.zIndex     = p.z;
+      const p = POS.find(p => p.o === rel) || POS[0];
+      el.style.transform = `translate(${p.x}px, ${p.y}px) scale(${p.scale})`;
+      el.style.opacity   = p.op;
+      el.style.zIndex    = p.z;
       el.classList.toggle('is-active', rel === 0);
     });
     dots.forEach((d, i) => d.classList.toggle('active', i === current));
@@ -1160,9 +1337,10 @@
   }
 
   /* ---- Init ---- */
+  applyBaseSize();
   render();
   slamTitle();
-  window.addEventListener('resize', render);
+  window.addEventListener('resize', () => { applyBaseSize(); render(); });
 
   /* ---- Add to cart from promo ---- */
   document.getElementById('promoAddCart').addEventListener('click', () => {
@@ -1343,8 +1521,8 @@
     hero_btn_res:{en:"Reserve a Table", pt:"Reservar Mesa"},
     ribbon_lbl_rating:{en:"Google Rating", pt:"Avaliação Google"},
     ribbon_lbl_reviews:{en:"Guest Reviews", pt:"Avaliações"},
-    ribbon_lbl_price:{en:"Moderately Priced", pt:"Preço Moderado"},
-    ribbon_lbl_thanks:{en:"From all of us at Kamagami", pt:"De toda a equipa Kamagami"},
+
+
     menu_title:{en:"The Menu", pt:"O Menu"},
     menu_note:{en:"Build your order below — add dishes to your basket and send it straight to the kitchen via WhatsApp, or just bring the list with you.", pt:"Monte o seu pedido abaixo — adicione pratos ao cesto e envie diretamente para a cozinha via WhatsApp, ou leve a lista consigo."},
     tab_small:{en:"Small Plates", pt:"Petiscos"},
