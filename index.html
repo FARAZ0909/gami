@@ -969,19 +969,25 @@
   transition:background .2s, border-color .2s;
 }
 .promo-add-cart:hover{ background:rgba(253,243,238,0.12); border-color:#fdf3ee; }
+.promo-cta, .promo-add-cart{
+  width:100%; max-width:240px;
+  justify-content:center;
+}
 
 /* Responsive */
 @media(max-width:700px){
-  .ring-stage{ height:280px; }
+  .ring-stage{ height:260px; }
   .promo-info-bar{ flex-direction:column; align-items:center; text-align:center; gap:16px; }
   .promo-info-left{ align-items:center; }
   .promo-info-right{ align-items:center; }
-  .ring-arrow-left { left:-4px; }
-  .ring-arrow-right{ right:-4px; }
+  .poster-title-wrap{ margin-bottom:-60px; }
+  .ring-arrow-left { left:2px; }
+  .ring-arrow-right{ right:2px; }
 }
 @media(max-width:440px){
-  .ring-stage{ height:230px; }
-  .poster-line{ font-size:clamp(52px,18vw,80px); }
+  .ring-stage{ height:210px; }
+  .poster-title-wrap{ margin-bottom:-45px; }
+  .poster-line{ font-size:clamp(52px,18vw,82px); }
 }
 </style>
 
@@ -1035,7 +1041,7 @@
     }
   ];
 
-  const N = BOWLS.length;
+  const N        = BOWLS.length;
   const TRACK    = document.getElementById('ringTrack');
   const DOTS_EL  = document.getElementById('ringDots');
   const DESC_EL  = document.getElementById('ringDesc');
@@ -1044,18 +1050,10 @@
   const LINE1    = document.getElementById('posterLine1');
   const LINE2    = document.getElementById('posterLine2');
 
-  /* bowl sizes */
-  const SIZE_CENTER = 280;
-  const SIZE_SIDE   = 172;
-  /* x offsets from track center */
-  const X_CENTER = 0;
-  const X_SIDE   = 290;
-  const Y_SIDE   = 22;
+  let current   = 1;
+  let animating = false;
 
-  let current  = 1; // start on Shisen Tantan Men
-  let animating= false;
-
-  /* Build bowls */
+  /* ---- Build bowls ---- */
   BOWLS.forEach((b, i) => {
     const el = document.createElement('div');
     el.className = 'ring-bowl';
@@ -1065,103 +1063,113 @@
     TRACK.appendChild(el);
   });
 
-  /* Build dots */
+  /* ---- Build dots ---- */
   BOWLS.forEach((_, i) => {
     const d = document.createElement('div');
-    d.className = 'ring-dot' + (i===current?' active':'');
-    d.addEventListener('click', () => { if(!animating && i!==current) rotateTo(i); });
+    d.className = 'ring-dot' + (i === current ? ' active' : '');
+    d.addEventListener('click', () => { if(!animating && i !== current) rotateTo(i); });
     DOTS_EL.appendChild(d);
   });
 
-  /* Arrows */
-  document.getElementById('ringLeft') .addEventListener('click', () => { if(!animating) rotateTo((current-1+N)%N); });
-  document.getElementById('ringRight').addEventListener('click', () => { if(!animating) rotateTo((current+1)%N); });
+  /* ---- Arrows ---- */
+  document.getElementById('ringLeft') .addEventListener('click', () => { if(!animating) rotateTo((current - 1 + N) % N); });
+  document.getElementById('ringRight').addEventListener('click', () => { if(!animating) rotateTo((current + 1) % N); });
 
-  /* Touch swipe */
+  /* ---- Touch swipe ---- */
   let tx = 0;
   TRACK.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
   TRACK.addEventListener('touchend',   e => {
     const dx = e.changedTouches[0].clientX - tx;
-    if(Math.abs(dx)>40 && !animating) rotateTo(dx<0?(current+1)%N:(current-1+N)%N);
+    if(Math.abs(dx) > 40 && !animating) rotateTo(dx < 0 ? (current+1)%N : (current-1+N)%N);
   }, {passive:true});
 
-  function rotateTo(t){
-    animating = true;
-    current = t;
-    render();
-    slamTitle();
-    fadeInfo();
-    setTimeout(() => { animating=false; }, 620);
+  /* ---- getSizes: responsive bowl dimensions ---- */
+  function getSizes(){
+    const vw = window.innerWidth;
+    if(vw <= 440) return { center:180, side:106, xSide:168, ySide:14 };
+    if(vw <= 600) return { center:210, side:124, xSide:196, ySide:16 };
+    if(vw <= 700) return { center:230, side:136, xSide:218, ySide:18 };
+    return               { center:280, side:172, xSide:290, ySide:22 };
   }
 
-  /* positions: -2=hidden-far-left, -1=left, 0=center, 1=right, 2=hidden-far-right */
-  const POS = [
-    { o:-2, x:-X_SIDE*1.85, y:Y_SIDE*2, s:SIZE_SIDE*0.6,  op:0,    z:0  },
-    { o:-1, x:-X_SIDE,       y:Y_SIDE,   s:SIZE_SIDE,      op:0.78, z:5  },
-    { o: 0, x: X_CENTER,     y:0,        s:SIZE_CENTER,    op:1,    z:10 },
-    { o: 1, x: X_SIDE,       y:Y_SIDE,   s:SIZE_SIDE,      op:0.78, z:5  },
-    { o: 2, x: X_SIDE*1.85,  y:Y_SIDE*2, s:SIZE_SIDE*0.6,  op:0,    z:0  },
-  ];
-
+  /* ---- render ---- */
   function render(){
+    const { center, side, xSide, ySide } = getSizes();
+    const POS = [
+      { o:-2, x:-xSide*1.85, y:ySide*2, s:side*0.6, op:0,    z:0  },
+      { o:-1, x:-xSide,       y:ySide,   s:side,     op:0.78, z:5  },
+      { o: 0, x:0,            y:0,       s:center,   op:1,    z:10 },
+      { o: 1, x: xSide,       y:ySide,   s:side,     op:0.78, z:5  },
+      { o: 2, x: xSide*1.85,  y:ySide*2, s:side*0.6, op:0,    z:0  },
+    ];
     const bowls = TRACK.querySelectorAll('.ring-bowl');
     const dots  = DOTS_EL.querySelectorAll('.ring-dot');
-
     bowls.forEach((el, i) => {
       let rel = ((i - current) % N + N) % N;
       if(rel > N/2) rel -= N;
-      const p = POS.find(p=>p.o===rel) || POS[0];
-      const half = p.s/2;
-      el.style.width   = p.s + 'px';
-      el.style.height  = p.s + 'px';
+      const p    = POS.find(p => p.o === rel) || POS[0];
+      const half = p.s / 2;
+      el.style.width      = p.s + 'px';
+      el.style.height     = p.s + 'px';
       el.style.marginLeft = -half + 'px';
       el.style.marginTop  = -half + 'px';
-      el.style.top     = '50%';
-      el.style.left    = '50%';
-      el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-      el.style.opacity   = p.op;
-      el.style.zIndex    = p.z;
-      el.classList.toggle('is-active', rel===0);
+      el.style.top        = '50%';
+      el.style.left       = '50%';
+      el.style.transform  = `translate(${p.x}px, ${p.y}px)`;
+      el.style.opacity    = p.op;
+      el.style.zIndex     = p.z;
+      el.classList.toggle('is-active', rel === 0);
     });
-
-    dots.forEach((d,i)=>d.classList.toggle('active', i===current));
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
   }
 
+  /* ---- rotateTo ---- */
+  function rotateTo(t){
+    animating = true;
+    current   = t;
+    render();
+    slamTitle();
+    fadeInfo();
+    setTimeout(() => { animating = false; }, 620);
+  }
+
+  /* ---- slamTitle ---- */
   function slamTitle(){
     const b = BOWLS[current];
     LINE1.classList.remove('slam');
     LINE2.classList.remove('slam');
     LINE1.textContent = b.lines[0] || '';
     LINE2.textContent = b.lines[1] || '';
-    LINE1.setAttribute('data-text', b.lines[0] || '');
-    LINE2.setAttribute('data-text', b.lines[1] || '');
     void LINE1.offsetWidth;
-    requestAnimationFrame(()=>{
+    requestAnimationFrame(() => {
       LINE1.classList.add('slam');
       LINE2.classList.add('slam');
     });
   }
 
+  /* ---- fadeInfo ---- */
   function fadeInfo(){
-    [DESC_EL, PRICE_EL, TAG_EL].forEach(el=>{ el.style.opacity='0'; });
-    setTimeout(()=>{
+    [DESC_EL, PRICE_EL, TAG_EL].forEach(el => { el.style.opacity = '0'; });
+    setTimeout(() => {
       const b = BOWLS[current];
       DESC_EL.textContent  = b.desc;
       PRICE_EL.textContent = b.price;
       TAG_EL.textContent   = b.tag;
-      [DESC_EL, PRICE_EL, TAG_EL].forEach(el=>{ el.style.transition='opacity .3s'; el.style.opacity='1'; });
+      [DESC_EL, PRICE_EL, TAG_EL].forEach(el => { el.style.transition = 'opacity .3s'; el.style.opacity = '1'; });
     }, 200);
   }
 
-  /* Init */
+  /* ---- Init ---- */
   render();
   slamTitle();
+  window.addEventListener('resize', render);
 
-  /* Add to cart from promo */
+  /* ---- Add to cart from promo ---- */
   document.getElementById('promoAddCart').addEventListener('click', () => {
     const b = BOWLS[current];
     addToCart(b.id, b.lines.join(' '), parseFloat(b.price.replace('€','')), 1);
   });
+
 })();
 </script>
 
