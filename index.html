@@ -93,9 +93,11 @@
   .btn-ghost{border:1px solid rgba(250,245,233,0.3); color:var(--washi-2); padding:15px 28px; border-radius:3px; font-weight:600; font-size:14.5px;}
   .btn-ghost:hover{background:rgba(250,245,233,0.08);}
   .ribbon-banner{background:var(--akane); color:#fdf3ee; padding:18px 0; position:relative; z-index:2; margin-top:40px;}
-  .ribbon-inner{display:flex; justify-content:center; gap:46px; flex-wrap:wrap; text-align:center;}
+  .ribbon-inner{display:flex; justify-content:center; gap:32px; flex-wrap:nowrap; text-align:center; align-items:center;}
+  .ribbon-stat{flex:1; min-width:0;}
   .ribbon-stat .num{font-family:'Shippori Mincho B1', serif; font-weight:700; font-size:22px;}
   .ribbon-stat .lbl{font-family:'Space Mono', monospace; font-size:10.5px; letter-spacing:.1em; opacity:.85; text-transform:uppercase; margin-top:2px;}
+  .ribbon-divider{width:1px; height:36px; background:rgba(253,243,238,0.35); flex-shrink:0;}
 
   /* ---------------- sections ---------------- */
   section{padding:90px 0; position:relative; overflow:hidden;}
@@ -370,7 +372,7 @@
     .tab-btn{padding:6px 10px; font-size:10.5px;}
     .dish-art{width:90px; min-width:90px;}
     .promo-art{width:180px; height:180px;}
-    .ribbon-inner{flex-direction:column; align-items:center; gap:12px;}
+    .ribbon-inner{flex-direction:row; gap:12px; padding:0 12px;}
   }
 </style>
 </head>
@@ -586,6 +588,7 @@
   <div class="ribbon-banner">
     <div class="wrap ribbon-inner">
       <div class="ribbon-stat"><div class="num">4.8 ★</div><div class="lbl" data-i18n="ribbon_lbl_rating">Google Rating</div></div>
+      <div class="ribbon-divider"></div>
       <div class="ribbon-stat"><div class="num">351</div><div class="lbl" data-i18n="ribbon_lbl_reviews">Guest Reviews</div></div>
     </div>
   </div>
