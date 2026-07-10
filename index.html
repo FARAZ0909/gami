@@ -387,7 +387,7 @@ function addEnLine(text){
 function showReplies(options){
   repliesBox.innerHTML = '';
   if(!options || !options.length){
-    repliesBox.innerHTML = '<div class="empty">No suggestion for that one — you\\'re on your own here.</div>';
+    repliesBox.innerHTML = '<div class="empty">No suggestion for that one — you are on your own here.</div>';
     return;
   }
   options.forEach(text=>{
@@ -445,7 +445,7 @@ The replies should be short, casual, business-appropriate responses the English 
 
 function startRecognition(){
   if(!SpeechRecognition){
-    alert('Your browser doesn\\'t support live speech recognition. Try Chrome or Edge on desktop, or Chrome on Android.');
+    alert('Your browser does not support live speech recognition. Try Chrome or Edge on desktop, or Chrome on Android.');
     return;
   }
   recognition = new SpeechRecognition();
